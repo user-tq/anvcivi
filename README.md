@@ -20,7 +20,7 @@ pip install yaml pandas
 #下载
 git clone .../.git
 #运行
-python anvcivi.py -i anovar_add_af.tsv  -o outdir/
+python anvcivi.py -i anovar_add_af.tsv  -o out_dir/
 ```
 anvcivi 需要与anvcivi.config.yml 同一目录
 

@@ -18,7 +18,7 @@ https://civicdb.org/downloads/01-Dec-2022/01-Dec-2022-ClinicalEvidenceSummaries.
 #安装依赖
 pip install yaml pandas
 #下载
-git clone .../.git
+git clone https://github.com/user-tq/anvcivi.git
 #运行
 python anvcivi.py -i anovar_add_af.tsv  -o out_dir/
 ```

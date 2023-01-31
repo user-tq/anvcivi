@@ -1,2 +1,2 @@
-civic: 01-Dec-2022-ClinicalEvidenceSummaries.tsv
-mane: MANE.GRCh38.v1.0.summary.txt.gz
+civic: civic_clean/accept_var_info.tsv
+mane: source/MANE.GRCh38.v1.0.summary.txt.gz

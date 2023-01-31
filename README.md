@@ -33,7 +33,7 @@ https://civicdb.org/downloads/01-Dec-2022/01-Dec-2022-ClinicalEvidenceSummaries.
     cDNA准确位点，如：JAK2 c.1641+1dup （注意，这取决于civic内是否用cDNA层级表示）
     任何突变，如KRAS MUTATION
 
-3.civic本身存在变体未细分的问题，如EGFR EXON 19 DEL，EGFR EXON 20 INS，这类突变后续我打算将这类突变归类起来，创建一个json文件，直接根据annovar结果映射
+3.civic本身存在变体未细分的问题，如EGFR EXON 19 DEL，EGFR EXON 20 INS，后续我打算将这类突变归类起来，创建一个json文件，直接根据annovar结果映射
 
 ### 使用方法
 ```

@@ -22,7 +22,7 @@ https://civicdb.org/downloads/01-Dec-2022/01-Dec-2022-ClinicalEvidenceSummaries.
 
 要实现hgvs标准化，需要保证作为输入的annovar的注释结果与hgvs所用的uta内的转录本版本一致，测试发现hgvs性能很差（可能是未本地化原因），一个cDNA突变映射到氨基酸水平需要10秒左右。
 
-考虑以上种种原因，显然，基于VEP的结果去关联civic的药物靶点信息，是更好的选择.(暂定名vepcivic)
+考虑以上种种原因，显然，基于VEP的结果去关联civic的药物靶点信息，是更好的选择(后续有机会仔细学习VEP，暂定名vepcivic)
 目前，只能将*替换为X以实现匹配
 
 2.civic涵盖突变类型很多，要用于实际生产与科研，必须人工逐一核对。本流程仅作测试用途，部分变异暂未能完全解析（见civic_clean/unaccept_var.tsv）

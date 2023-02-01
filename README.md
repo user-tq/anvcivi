@@ -8,8 +8,8 @@ https://civicdb.org/downloads/01-Dec-2022/01-Dec-2022-ClinicalEvidenceSummaries.
 
 ### 使用须知
 1.annovar结果存在多个转录本问题，此脚本尝试选取MANE项目中的对应转录本，否则将取最靠前的转录本，并输出警告
-2.civic中的蛋白质与cDNA命名满足hgvs标准命名规范，但是annovar的氨基酸水平命名并不完全遵守此规则，因此会有些位点遗漏（使用-hgvs参数，可以使annovar cDNA突变符合hgvs标准）。
-例如：
+2.civic中的蛋白质与cDNA突变命名满足hgvs标准命名规范，但是annovar的氨基酸水平命名并不完全遵守此规则（使用-hgvs参数，可以使annovar cDNA突变符合hgvs标准）。
+已知的有：
     终止密码子突变时，hgvs: p.C2546* annovar: p.C2546X  
     同义突变时，hgvs:p.C123=   annovar: p.C123C
     
@@ -19,7 +19,7 @@ https://civicdb.org/downloads/01-Dec-2022/01-Dec-2022-ClinicalEvidenceSummaries.
 总之annovar对hgvs格式不友好，疑似遵循老版HGVS标准
 
 ~~目前设想是:先根据annovar -hgvs 获得满足hgvs命名规则的cDNA突变命名，再借由python hgvs包，解析出氨基酸水平突变命名。最终将其与civic用药信息关联。~~
-发现由于转录本版本问题，并不是所有cDNA_to_protein都能成功，见https://github.com/biocommons/hgvs/issues/649#issue-1518426891
+发现由于转录本版本问题，并不是所有cDNA_to_protein都能成功，见https://github.com/biocommons/hgvs/issues/649#issue-1518426891，解决方法可能是使用annovar下载的refseq数据库，而是自下载refseq并更新
 
 并且，测试发现hgvs性能很差（可能是未本地化原因），一个cDNA突变映射到氨基酸水平需要10秒左右。
 

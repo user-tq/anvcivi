@@ -52,3 +52,8 @@ anvcivi.py 需要与anvcivi.config.yml 同一目录
 ### 输入文件格式 
 输入文件格式：见example.tsv
 注意，这是一个轻量级脚本，不会校验基因、转录本、外显子、突变是否正确（如example.tsv中的JAK1，JAK2），并且只支持氨基酸简写
+
+### 其它
+利用pywebio可构建网页app
+
+python civiweb.py

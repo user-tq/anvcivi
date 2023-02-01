@@ -1,6 +1,6 @@
-AAChange_MANE	depth	af	isannotate
-EGFR:NM_005228:exon21:c.T2573G:p.L858R	5729	0.31	True
-EGFR:NM_001346941:exon18:c.2154_2155delinsAA:p.G719S	2500	0.4	True
-KRAS:NM_033360:exon2:c.33_34delinsAT:p.G12C	2500	0.4	True
-JAK1:NM_033360:exon2:c.33_34delinsAT:p.Q503X	2500	0.4	True
-JAK2:NM_033360:exon2:c.1641+1dup:p.?	2500	0.4	True
+AAChange_MANE	isannotate
+EGFR:NM_005228:exon21:c.T2573G:p.L858R	True
+EGFR:NM_001346941:exon18:c.2154_2155delinsAA:p.G719S	True
+KRAS:NM_033360:exon2:c.33_34delinsAT:p.G12C	True
+JAK1:NM_033360:exon2:c.33_34delinsAT:p.Q503X	True
+JAK2:NM_033360:exon2:c.1641+1dup:p.?	True

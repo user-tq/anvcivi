@@ -15,10 +15,11 @@ def A_ref_chose(str_aac, gene_transcript_dict):
             break
     if rt_a == '':
         rt_a = str_aac.split(',')[0]
-        global waringtxt
-        waringtxt = waringtxt +'警告：输入基因{}与转录本{}与MANE转录本{}冲突\n'.format( rt_a.split(':')[0],rt_a.split(':')[1],gene_transcript_dict.get(rt_a.split(':')[0])) 
+        waringtxt = '警告：输入基因{}与转录本{}与MANE转录本{}冲突'.format( rt_a.split(':')[0],rt_a.split(':')[1],gene_transcript_dict.get(rt_a.split(':')[0])) 
+        return rt_a , waringtxt
+    else:
 
-    return rt_a
+        return rt_a , None
 
 def connect_medic(row, pd_var_medic):
 
@@ -57,8 +58,8 @@ def var_civic(annovar_variant,civic_data,gene_transcript_kv ):
     '''
     输入annovar变体列表 如 AAChange.refGene 
     '''
-
-    annovar_variant['AAChange_MANE'] = annovar_variant['AAChange.refGene'].apply(A_ref_chose, args=(gene_transcript_kv, ))
+    #print(annovar_variant['AAChange.refGene'].apply(A_ref_chose,result_type="expand" ,args=(gene_transcript_kv,)))
+    annovar_variant['AAChange_MANE'],annovar_variant['select_waring'] = zip(*annovar_variant['AAChange.refGene'].apply(A_ref_chose, args=(gene_transcript_kv,) ))
 
     annovar_variant[['AA_match', 'INFO']] = annovar_variant.apply(connect_medic,
                                                       args=(civic_data, ),
@@ -67,22 +68,23 @@ def var_civic(annovar_variant,civic_data,gene_transcript_kv ):
 
     # https://datascientyst.com/normalize-json-dict-new-columns-pandas/   
     # json 再explot
-    table_var = annovar_variant[~(annovar_variant['INFO'].isna())][['AAChange_MANE', 'depth', 'af', 'INFO']]
+    table_var = annovar_variant[~(annovar_variant['INFO'].isna())][['AAChange_MANE', 'INFO']]
     table_var = table_var.explode('INFO')
     table_var = pd.concat([table_var, table_var['INFO'].apply(flatten).apply(pd.Series)], axis=1)
 
+    waring_pd= annovar_variant[~(annovar_variant['select_waring'].isna()) ][['select_waring']].drop_duplicates().reset_index(drop=True)
     annovar_variant['isannotate']=(~annovar_variant['INFO'].isna())
 
 
-    var_af = annovar_variant[['AAChange_MANE', 'depth','af','isannotate']]#.drop_duplicates().reset_index(drop=True)
+    var_af = annovar_variant[['AAChange_MANE','isannotate']]#.drop_duplicates().reset_index(drop=True)
 
 
     table_var_af_medic = table_var[[
-    'AAChange_MANE', 'af', 'citation_id', 'clinical_significance', 'disease',
+    'AAChange_MANE', 'citation_id', 'clinical_significance', 'disease',
     'drugs','evidence_level'
     ]]
     table_var_af_medic = table_var_af_medic.groupby(
-    ['AAChange_MANE', 'af',
+    ['AAChange_MANE',
      'clinical_significance', 'disease', 'drugs','evidence_level'])['citation_id'].apply(
          lambda x: ','.join(set(x.values))).reset_index()
     
@@ -90,7 +92,7 @@ def var_civic(annovar_variant,civic_data,gene_transcript_kv ):
 
     table_ev = table_var[['citation_id', 'evidence_statement']].reset_index(drop=True)
 
-    return var_af, table_var_af_medic , table_ev
+    return var_af, table_var_af_medic , table_ev ,waring_pd
 
 #https://civicdb.org/downloads/01-Dec-2022/01-Dec-2022-ClinicalEvidenceSummaries.tsv
 
@@ -132,17 +134,13 @@ def main():
 
     annovar_variant = pd.read_csv(args.input, sep='\t')
     
-    #Sensi_dict = {'Sensitivity/Response': "敏感", 'Reduced Sensitivity': "敏感度降低",'Resistance':"耐药",'Adverse Response':'不良反应'}
 
-    with open(path_dic['mane'], 'r') as fp:
+    with open(path_dic['sig_term'], 'r', encoding='utf8') as fp:
         sig_term_dict = json.load(fp)
 
-    #disease_dict = 
     civic_data = civic_data.replace({'clinical_significance':sig_term_dict})
     #civic_data=civic_data.replace({"disease": disease_dict})
     civic_data['variant']=civic_data['variant'].str.replace('*', 'X',regex=False)
-    #res['disease'] = res['disease'].map(column_dict)   #会将不在字典的赋空 不用
-    
 
 
 
@@ -153,17 +151,18 @@ def main():
         os.makedirs(args.out_dir)
 
 
-    table_var_af ,table_var_af_medic,table_ev =  var_civic(annovar_variant,civic_data,gene_transcript_dict)
+    table_var_af ,table_var_af_medic,table_ev ,waring_pd=  var_civic(annovar_variant,civic_data,gene_transcript_dict)
 
 
 
     table_var_af.to_csv(args.out_dir + '/var_af.tsv', sep='\t', index=None)
     table_var_af_medic.to_csv(args.out_dir + '/var_medic.tsv', sep='\t', index=None)
     table_ev.to_csv(args.out_dir + '/evidence.tsv', sep='\t', index=None)
+    print(waring_pd)
 
 
     
 if __name__ == '__main__':
-    waringtxt='MANE文件地址：https://ftp.ncbi.nlm.nih.gov/refseq/MANE/MANE_human/release_1.0/MANE.GRCh38.v1.0.summary.txt.gz\n'
+    
     main()
-    print(waringtxt)
+

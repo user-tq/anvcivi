@@ -1,2 +1,4 @@
 civic: civic_clean/accept_var_info.tsv
-mane: source/MANE.GRCh38.v1.0.summary.txt.gz
+mane: json/MANE_gene_transcript.json
+sig_term: json/significance_term_translate.json
+

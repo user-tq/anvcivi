@@ -1,6 +1,7 @@
 import pandas as pd
 import yaml
 import os
+import json
 import argparse
 from flatten_json import flatten
 
@@ -52,16 +53,10 @@ def connect_medic(row, pd_var_medic):
 
 
 
-def var_civic(annovar_variant,civic_data,gene_transcript):
+def var_civic(annovar_variant,civic_data,gene_transcript_kv ):
     '''
     输入annovar变体列表 如 AAChange.refGene 
     '''
-    
-
-
-    gene_transcript = gene_transcript[['symbol', 'RefSeq_nuc']].copy()
-    gene_transcript['RefSeq_nuc'] = gene_transcript['RefSeq_nuc'].str.replace('.[0-9]$', '',regex=True)
-    gene_transcript_kv = gene_transcript.set_index('symbol').to_dict(orient='dict')['RefSeq_nuc']
 
     annovar_variant['AAChange_MANE'] = annovar_variant['AAChange.refGene'].apply(A_ref_chose, args=(gene_transcript_kv, ))
 
@@ -91,7 +86,7 @@ def var_civic(annovar_variant,civic_data,gene_transcript):
      'clinical_significance', 'disease', 'drugs','evidence_level'])['citation_id'].apply(
          lambda x: ','.join(set(x.values))).reset_index()
     
-    print(table_var)
+    #print(table_var)
 
     table_ev = table_var[['citation_id', 'evidence_statement']].reset_index(drop=True)
 
@@ -132,14 +127,19 @@ def main():
 
     
     civic_data = pd.read_csv(path_dic['civic'], sep='\t')
-    gene_transcript = pd.read_csv(path_dic['mane'], sep='\t', compression='gzip')
+    with open(path_dic['mane'], 'r') as fp:
+        gene_transcript_dict = json.load(fp)
+
     annovar_variant = pd.read_csv(args.input, sep='\t')
     
-    Sensi_dict = {'Sensitivity/Response': "敏感", 'Reduced Sensitivity': "敏感度降低",'Resistance':"耐药",'Adverse Response':'不良反应'}
-    disease_dict = {'Lung Non-small Cell Carcinoma':'非小细胞肺癌','Lung Small Cell Carcinoma':'小细胞肺癌','Lung Adenocarcinoma':'肺腺癌','High Grade Glioma':'高级别胶质瘤','Colorectal Cancer':'结直肠癌'}
+    #Sensi_dict = {'Sensitivity/Response': "敏感", 'Reduced Sensitivity': "敏感度降低",'Resistance':"耐药",'Adverse Response':'不良反应'}
 
-    civic_data = civic_data.replace({'clinical_significance':Sensi_dict})
-    civic_data=civic_data.replace({"disease": disease_dict})
+    with open(path_dic['mane'], 'r') as fp:
+        sig_term_dict = json.load(fp)
+
+    #disease_dict = 
+    civic_data = civic_data.replace({'clinical_significance':sig_term_dict})
+    #civic_data=civic_data.replace({"disease": disease_dict})
     civic_data['variant']=civic_data['variant'].str.replace('*', 'X',regex=False)
     #res['disease'] = res['disease'].map(column_dict)   #会将不在字典的赋空 不用
     
@@ -153,7 +153,7 @@ def main():
         os.makedirs(args.out_dir)
 
 
-    table_var_af ,table_var_af_medic,table_ev =  var_civic(annovar_variant,civic_data,gene_transcript)
+    table_var_af ,table_var_af_medic,table_ev =  var_civic(annovar_variant,civic_data,gene_transcript_dict)
 
 
 

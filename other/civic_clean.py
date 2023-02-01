@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 import os
+import argparse
 
 def var_add_col(df, colname, pattern):
     df[colname] = df['variant'].str.contains(pattern, regex=True)
@@ -29,12 +30,26 @@ def str_cut(string):
 
     
     if len(str) != 0:
-        print(str)
+
         return str[0]
     else:
         return string
 
-res = pd.read_csv('source/01-Dec-2022-ClinicalEvidenceSummaries.tsv', sep='\t')
+parser = argparse.ArgumentParser(description='clean civic argparse')
+parser.add_argument('-i',
+                        '--input',
+                        type=str,
+                        required=True,
+                        help='输入文件,civic 文件 ')
+parser.add_argument('-o',
+                        '--outdir',
+                        type=str,
+                        required=True,
+                        help='选择只注释的疾病,需要civic本身支持，all注释全疾病')
+
+args = parser.parse_args()
+
+res = pd.read_csv(args.input, sep='\t')
 
 res=res[res['evidence_type']=='Predictive'] # 用药预测
 res['citation_id']=res['citation_id'].astype(str)+'('+res['source_type']+')'
@@ -64,19 +79,19 @@ if not_single_pattern_var.shape[0] !=0:
  #有关分子谱对 治疗 反应的影响的证据,即用药相关部分
 #res=res[res['evidence_type']=='Oncogenic'] 
 
-if not os.path.exists('civic_clean/'):  #判断所在目录下有该文件名的文件夹
-    os.makedirs('civic_clean/')
+if not os.path.exists(args.outdir):  #判断所在目录下有该文件名的文件夹
+    os.makedirs(args.outdir)
 #------------------------------------#
 no_clas=res.query('(isexonvar == False) & (isppos == False) & (ispvar == False) & (iscvar == False) & (isfusion == False) & (ismutation == False)' )
 no_clas=no_clas.reset_index(drop=True)
 no_clas=no_clas[['gene','variant','evidence_level','drugs','clinical_significance','evidence_statement']].sort_values(by='evidence_level', ascending=True)
-no_clas.to_csv('civic_clean/unaccept_var.tsv', sep='\t')
+no_clas.to_csv(args.outdir+'/unaccept_var.tsv', sep='\t')
 #------------------------#
 # acclas[['gene','variant','isexonvar','isppos', 'ispvar','iscvar','isfusion']].to_csv('aceptvar.tsv', sep='\t')
 
 acclas=res.query('~( (isexonvar == False) & (isppos == False) & (ispvar == False) & (iscvar == False) & (isfusion == False) & (ismutation == False) )' )
 acclas=acclas.reset_index(drop=True)
-acclas.to_csv('civic_clean/accept_var_info.tsv', sep='\t')
+acclas.to_csv(args.outdir+'/accept_var_info.tsv', sep='\t')
 
 #---------------------------------------#
 

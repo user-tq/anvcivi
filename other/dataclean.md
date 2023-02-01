@@ -1,4 +1,18 @@
+civic 数据库 数据清洗
+```
+python civic_clean.py -i ../source/01-Dec-2022-ClinicalEvidenceSummaries.tsv -o ../civic_clean
+```
 
+MANE 基因名(symbol)与转录本(RefSeq_nuc)提取为json，不考虑版本
+```
+python  .\MANE_gene_transcript_json.py
+```
+
+
+
+
+
+civic 知识背景：
 https://civic.readthedocs.io/en/latest/model/evidence/type.html#evidence-type
 
 |   Evidence    | 中文|解释|

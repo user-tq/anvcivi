@@ -110,7 +110,7 @@ def main():
                         '--disease',
                         type=str,
                         required=True,
-                        help='选择只注释的疾病,需要civic本身支持，all注释全疾病')
+                        help='选择只注释的疾病,需要civic本身支持，ALL注释全疾病')
     parser.add_argument('-c',
                         '--config',
                         type=str,
@@ -144,7 +144,7 @@ def main():
 
 
 
-    if  args.disease != 'all':
+    if  args.disease != 'ALL':
         civic_data=civic_data[civic_data['disease']==args.disease]
 
     if not os.path.exists(args.out_dir):  #判断所在目录下有该文件名的文件夹

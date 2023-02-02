@@ -44,7 +44,7 @@ git clone https://github.com/user-tq/anvcivi.git
 #安装依赖
 pip install -r requirements.txt
 #测试运行
-python anvcivi.py -i example.tsv  -o example_out/  -d all
+python anvcivi.py -i example.tsv  -o example_out/  -d ALL
 
 注意，实际运行需配置 anvcivi.config.yml 中资源为绝对路径
 anvcivi.py 需要与anvcivi.config.yml 同一目录
@@ -54,6 +54,6 @@ anvcivi.py 需要与anvcivi.config.yml 同一目录
 注意，这是一个轻量级脚本，不会校验基因、转录本、外显子、突变是否正确（如example.tsv中的JAK1，JAK2），并且只支持氨基酸简写
 
 ### 其它
-利用pywebio可构建网页app
+利用pywebio可构建网页app,占用8800端口
 
 python civiweb.py

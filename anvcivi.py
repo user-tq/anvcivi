@@ -26,6 +26,17 @@ def connect_medic(row, pd_var_medic):
     alist = row['AAChange_MANE'].split(':')
 
     tmppd = pd_var_medic[pd_var_medic['gene'] == alist[0]] 
+
+    #特殊情况之annovar不给p.var，或者格式不对劲
+    if len(alist) == 4  and alist[3].upper() in tmppd['variant'].values:
+        return   alist[3].upper() , tmppd[tmppd['variant'] == cval][[
+            'clinical_significance', 'disease', 'drugs', 'evidence_level','citation_id',
+            'evidence_statement'
+        ]].to_dict('records')
+    elif len(alist) != 5 :
+        return row['AAChange_MANE'], None
+
+
     pval = alist[4].replace('p.', '').replace('*', 'X').upper()  #氨基酸变化
     cval = alist[3].upper()   #cDNA变化
 
